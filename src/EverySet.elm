@@ -1,7 +1,7 @@
 module EverySet exposing
     ( EverySet
     , empty, singleton, insert, remove
-    , isEmpty, member, size
+    , equals, isEmpty, member, size
     , union, intersect, diff
     , toList, fromList
     , map, foldl, foldr, filter, partition
@@ -23,7 +23,7 @@ based on [AssocList](https://package.elm-lang.org/packages/pzp1997/assoc-list/la
 
 # Query
 
-@docs isEmpty, member, size
+@docs equals, isEmpty, member, size
 
 
 # Combine
@@ -57,6 +57,19 @@ type EverySet a
 empty : EverySet a
 empty =
     EverySet AssocList.empty
+
+
+{-| Compare two sets for equality, ignoring insertion order.
+Sets are defined to be equal when they have identical elements
+where elements are compared using the built-in equality operator.
+
+**You should almost never use the built-in equality operator to compare
+sets from this module since association lists have no canonical form.**
+
+-}
+equals : EverySet a -> EverySet a -> Bool
+equals (EverySet dictA) (EverySet dictB) =
+    AssocList.eq dictA dictB
 
 
 {-| Create a set with one value.
