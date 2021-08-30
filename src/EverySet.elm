@@ -196,14 +196,38 @@ fromList xs =
     List.foldl insert empty xs
 
 
-{-| Fold over the values in a set, in order from lowest to highest.
+{-| Fold over the elements in a set from most recently inserted
+to least recently inserted.
+
+    users : Set ( String,  Int )
+    users =
+        empty
+            |> insert ("Alice", 28)
+            |> insert ("Bob", 19)
+            |> insert ("Chuck", 33)
+
+    foldl (\(name, age) result -> age :: result) [] users
+    --> [28,19,33]
+
 -}
 foldl : (a -> b -> b) -> b -> EverySet a -> b
 foldl f b (EverySet d) =
     AssocList.foldl (\k _ result -> f k result) b d
 
 
-{-| Fold over the values in a set, in order from highest to lowest.
+{-| Fold over the elements in a set from least recently inserted
+to most recently inserted.
+
+    users : Set ( String,  Int )
+    users =
+        empty
+            |> insert ("Alice", 28)
+            |> insert ("Bob", 19)
+            |> insert ("Chuck", 33)
+
+    foldl (\(name, age) result -> age :: result) [] user
+    --> [33,19,28]
+
 -}
 foldr : (a -> b -> b) -> b -> EverySet a -> b
 foldr f b (EverySet d) =
