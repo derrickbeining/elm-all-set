@@ -1,10 +1,10 @@
-module EverySet exposing
-    ( EverySet
-    , empty, singleton, insert, remove
+module Data.Set exposing
+    ( empty, singleton, insert, remove
     , equals, isEmpty, member, size, withdrawFirst, withdrawLast
     , union, intersect, diff
     , toList, fromList
     , map, foldl, foldr, filter, partition, findFirst, findLast
+    , Set
     )
 
 {-| A set of unique values. The values can be any type, as the implementation is
@@ -48,15 +48,15 @@ import AssocList exposing (Dict)
 {-| Represents a set of unique values. So `(Set Int)` is a set of integers and
 `(Set String)` is a set of strings.
 -}
-type EverySet a
-    = EverySet (Dict a ())
+type Set a
+    = Set (Dict a ())
 
 
 {-| Create an empty set.
 -}
-empty : EverySet a
+empty : Set a
 empty =
-    EverySet AssocList.empty
+    Set AssocList.empty
 
 
 {-| Compare two sets for equality, ignoring insertion order.
@@ -67,36 +67,36 @@ where elements are compared using the built-in equality operator.
 sets from this module since association lists have no canonical form.**
 
 -}
-equals : EverySet a -> EverySet a -> Bool
-equals (EverySet dictA) (EverySet dictB) =
+equals : Set a -> Set a -> Bool
+equals (Set dictA) (Set dictB) =
     AssocList.eq dictA dictB
 
 
 {-| Create a set with one value.
 -}
-singleton : a -> EverySet a
+singleton : a -> Set a
 singleton k =
-    EverySet <| AssocList.singleton k ()
+    Set <| AssocList.singleton k ()
 
 
 {-| Insert a value into a set.
 -}
-insert : a -> EverySet a -> EverySet a
-insert k (EverySet d) =
-    EverySet <| AssocList.insert k () d
+insert : a -> Set a -> Set a
+insert k (Set d) =
+    Set <| AssocList.insert k () d
 
 
 {-| Remove a value from a set. If the value is not found, no changes are made.
 -}
-remove : a -> EverySet a -> EverySet a
-remove k (EverySet d) =
-    EverySet <| AssocList.remove k d
+remove : a -> Set a -> Set a
+remove k (Set d) =
+    Set <| AssocList.remove k d
 
 
 {-| Take the last-inserted value of the `Set` and get the `Set` with that
 value removed.
 -}
-withdrawLast : EverySet a -> Maybe ( EverySet a, a )
+withdrawLast : Set a -> Maybe ( Set a, a )
 withdrawLast fa =
     let
         go a result =
@@ -113,7 +113,7 @@ withdrawLast fa =
 {-| Take the first-inserted value of the `Set` and get the `Set` with that
 value removed.
 -}
-withdrawFirst : EverySet a -> Maybe ( EverySet a, a )
+withdrawFirst : Set a -> Maybe ( Set a, a )
 withdrawFirst fa =
     let
         go a result =
@@ -129,45 +129,45 @@ withdrawFirst fa =
 
 {-| Determine if a set is empty.
 -}
-isEmpty : EverySet a -> Bool
-isEmpty (EverySet d) =
+isEmpty : Set a -> Bool
+isEmpty (Set d) =
     AssocList.isEmpty d
 
 
 {-| Determine if a value is in a set.
 -}
-member : a -> EverySet a -> Bool
-member k (EverySet d) =
+member : a -> Set a -> Bool
+member k (Set d) =
     AssocList.member k d
 
 
 {-| Determine the number of elements in a set.
 -}
-size : EverySet a -> Int
-size (EverySet d) =
+size : Set a -> Int
+size (Set d) =
     AssocList.size d
 
 
 {-| Get the union of two sets. Keep all values.
 -}
-union : EverySet a -> EverySet a -> EverySet a
-union (EverySet d1) (EverySet d2) =
-    EverySet <| AssocList.union d1 d2
+union : Set a -> Set a -> Set a
+union (Set d1) (Set d2) =
+    Set <| AssocList.union d1 d2
 
 
 {-| Get the intersection of two sets. Keeps values that appear in both sets.
 -}
-intersect : EverySet a -> EverySet a -> EverySet a
-intersect (EverySet d1) (EverySet d2) =
-    EverySet <| AssocList.intersect d1 d2
+intersect : Set a -> Set a -> Set a
+intersect (Set d1) (Set d2) =
+    Set <| AssocList.intersect d1 d2
 
 
 {-| Get the difference between the first set and the second. Keeps values
 that do not appear in the second set.
 -}
-diff : EverySet a -> EverySet a -> EverySet a
-diff (EverySet d1) (EverySet d2) =
-    EverySet <| AssocList.diff d1 d2
+diff : Set a -> Set a -> Set a
+diff (Set d1) (Set d2) =
+    Set <| AssocList.diff d1 d2
 
 
 {-| Convert a `Set` to a `List`, ordering the elements by the order in which
@@ -184,14 +184,14 @@ However, `equals` should almost always be used instead of (==) when checking
 for `Set` equality, since it is not dependent on insertion order.
 
 -}
-toList : EverySet a -> List a
+toList : Set a -> List a
 toList =
     foldl (::) []
 
 
 {-| Convert a list into a set, removing any duplicates.
 -}
-fromList : List a -> EverySet a
+fromList : List a -> Set a
 fromList xs =
     List.foldl insert empty xs
 
@@ -210,8 +210,8 @@ to least recently inserted.
     --> [28,19,33]
 
 -}
-foldl : (a -> b -> b) -> b -> EverySet a -> b
-foldl f b (EverySet d) =
+foldl : (a -> b -> b) -> b -> Set a -> b
+foldl f b (Set d) =
     AssocList.foldl (\k _ result -> f k result) b d
 
 
@@ -229,21 +229,21 @@ to most recently inserted.
     --> [33,19,28]
 
 -}
-foldr : (a -> b -> b) -> b -> EverySet a -> b
-foldr f b (EverySet d) =
+foldr : (a -> b -> b) -> b -> Set a -> b
+foldr f b (Set d) =
     AssocList.foldr (\k _ result -> f k result) b d
 
 
 {-| Map a function onto a set, creating a new set with no duplicates.
 -}
-map : (a -> a2) -> EverySet a -> EverySet a2
+map : (a -> a2) -> Set a -> Set a2
 map f s =
     fromList (List.map f (toList s))
 
 
 {-| Get the first-inserted element of the `Set` which satisfies some test.
 -}
-findFirst : (a -> Bool) -> EverySet a -> Maybe a
+findFirst : (a -> Bool) -> Set a -> Maybe a
 findFirst test fa =
     let
         go a found =
@@ -263,7 +263,7 @@ findFirst test fa =
 
 {-| Get the last-inserted element of the `Set` which satisfies some test.
 -}
-findLast : (a -> Bool) -> EverySet a -> Maybe a
+findLast : (a -> Bool) -> Set a -> Maybe a
 findLast test fa =
     let
         go a found =
@@ -283,18 +283,18 @@ findLast test fa =
 
 {-| Create a new set consisting only of elements which satisfy a predicate.
 -}
-filter : (a -> Bool) -> EverySet a -> EverySet a
-filter p (EverySet d) =
-    EverySet <| AssocList.filter (\k _ -> p k) d
+filter : (a -> Bool) -> Set a -> Set a
+filter p (Set d) =
+    Set <| AssocList.filter (\k _ -> p k) d
 
 
 {-| Create two new sets; the first consisting of elements which satisfy a
 predicate, the second consisting of elements which do not.
 -}
-partition : (a -> Bool) -> EverySet a -> ( EverySet a, EverySet a )
-partition p (EverySet d) =
+partition : (a -> Bool) -> Set a -> ( Set a, Set a )
+partition p (Set d) =
     let
         ( p1, p2 ) =
             AssocList.partition (\k _ -> p k) d
     in
-    ( EverySet p1, EverySet p2 )
+    ( Set p1, Set p2 )
