@@ -3,7 +3,7 @@ module Tests exposing (MyInt(..), pred, set, setPart1, setPart2, tests)
 {-| All tests copie and adapted from Elm core.
 -}
 
-import EverySet exposing (EverySet)
+import Data.Set as Set exposing (Set)
 import Expect
 import Test exposing (..)
 
@@ -12,19 +12,19 @@ type MyInt
     = MyInt Int
 
 
-set : EverySet MyInt
+set : Set MyInt
 set =
-    EverySet.fromList <| List.map MyInt <| List.range 1 100
+    Set.fromList <| List.map MyInt <| List.range 1 100
 
 
-setPart1 : EverySet MyInt
+setPart1 : Set MyInt
 setPart1 =
-    EverySet.fromList <| List.map MyInt <| List.range 1 50
+    Set.fromList <| List.map MyInt <| List.range 1 50
 
 
-setPart2 : EverySet MyInt
+setPart2 : Set MyInt
 setPart2 =
-    EverySet.fromList <| List.map MyInt <| List.range 51 100
+    Set.fromList <| List.map MyInt <| List.range 51 100
 
 
 pred : MyInt -> Bool
@@ -38,19 +38,19 @@ tests =
         queryTests =
             describe "query Tests"
                 [ test "size of set of 100 elements" <|
-                    \() -> Expect.equal 100 (EverySet.size set)
+                    \() -> Expect.equal 100 (Set.size set)
                 ]
 
         filterTests =
             describe "filter Tests"
                 [ test "Simple filter" <|
-                    \() -> Expect.equal setPart1 <| EverySet.filter pred set
+                    \() -> Expect.equal setPart1 <| Set.filter pred set
                 ]
 
         partitionTests =
             describe "partition Tests"
                 [ test "Simple partition" <|
-                    \() -> Expect.equal ( setPart1, setPart2 ) <| EverySet.partition pred set
+                    \() -> Expect.equal ( setPart1, setPart2 ) <| Set.partition pred set
                 ]
     in
     describe "Set Tests" [ queryTests, partitionTests, filterTests ]
