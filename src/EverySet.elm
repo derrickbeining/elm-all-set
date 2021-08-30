@@ -1,7 +1,7 @@
 module EverySet exposing
     ( EverySet
     , empty, singleton, insert, remove
-    , equals, isEmpty, member, size
+    , equals, isEmpty, member, size, withdrawFirst, withdrawLast
     , union, intersect, diff
     , toList, fromList
     , map, foldl, foldr, filter, partition
@@ -23,7 +23,7 @@ based on [AssocList](https://package.elm-lang.org/packages/pzp1997/assoc-list/la
 
 # Query
 
-@docs equals, isEmpty, member, size
+@docs equals, isEmpty, member, size, withdrawFirst, withdrawLast
 
 
 # Combine
@@ -91,6 +91,40 @@ insert k (EverySet d) =
 remove : a -> EverySet a -> EverySet a
 remove k (EverySet d) =
     EverySet <| AssocList.remove k d
+
+
+{-| Take the last-inserted value of the `Set` and get the `Set` with that
+value removed.
+-}
+withdrawLast : EverySet a -> Maybe ( EverySet a, a )
+withdrawLast fa =
+    let
+        go a result =
+            case result of
+                Nothing ->
+                    Just ( remove a fa, a )
+
+                _ ->
+                    result
+    in
+    foldl go Nothing fa
+
+
+{-| Take the first-inserted value of the `Set` and get the `Set` with that
+value removed.
+-}
+withdrawFirst : EverySet a -> Maybe ( EverySet a, a )
+withdrawFirst fa =
+    let
+        go a result =
+            case result of
+                Nothing ->
+                    Just ( remove a fa, a )
+
+                _ ->
+                    result
+    in
+    foldr go Nothing fa
 
 
 {-| Determine if a set is empty.
