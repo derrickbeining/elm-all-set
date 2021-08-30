@@ -136,11 +136,23 @@ diff (EverySet d1) (EverySet d2) =
     EverySet <| AssocList.diff d1 d2
 
 
-{-| Convert a set into a list, sorted from lowest to highest.
+{-| Convert a `Set` to a `List`, ordering the elements by the order in which
+they were inserted into the `Set`. This property upholds symmetry with
+`fromList` so that
+
+    fromList (toList (fromList list)) == fromList list
+
+This is useful because `Set`s are equal (==) only if they have the same
+elements AND they were inserted in the same order. So we can go from `Set` to
+`List` and back without breaking the structural equality of a given `Set`.
+
+However, `equals` should almost always be used instead of (==) when checking
+for `Set` equality, since it is not dependent on insertion order.
+
 -}
 toList : EverySet a -> List a
-toList (EverySet d) =
-    AssocList.keys d
+toList =
+    foldl (::) []
 
 
 {-| Convert a list into a set, removing any duplicates.
