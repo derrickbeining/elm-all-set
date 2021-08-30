@@ -4,7 +4,7 @@ module EverySet exposing
     , equals, isEmpty, member, size, withdrawFirst, withdrawLast
     , union, intersect, diff
     , toList, fromList
-    , map, foldl, foldr, filter, partition
+    , map, foldl, foldr, filter, partition, findFirst, findLast
     )
 
 {-| A set of unique values. The values can be any type, as the implementation is
@@ -38,7 +38,7 @@ based on [AssocList](https://package.elm-lang.org/packages/pzp1997/assoc-list/la
 
 # Transform
 
-@docs map, foldl, foldr, filter, partition
+@docs map, foldl, foldr, filter, partition, findFirst, findLast
 
 -}
 
@@ -215,6 +215,46 @@ foldr f b (EverySet d) =
 map : (a -> a2) -> EverySet a -> EverySet a2
 map f s =
     fromList (List.map f (toList s))
+
+
+{-| Get the first-inserted element of the `Set` which satisfies some test.
+-}
+findFirst : (a -> Bool) -> EverySet a -> Maybe a
+findFirst test fa =
+    let
+        go a found =
+            case found of
+                Nothing ->
+                    if test a then
+                        Just a
+
+                    else
+                        Nothing
+
+                Just it ->
+                    Just it
+    in
+    foldr go Nothing fa
+
+
+{-| Get the last-inserted element of the `Set` which satisfies some test.
+-}
+findLast : (a -> Bool) -> EverySet a -> Maybe a
+findLast test fa =
+    let
+        go a found =
+            case found of
+                Nothing ->
+                    if test a then
+                        Just a
+
+                    else
+                        Nothing
+
+                Just it ->
+                    Just it
+    in
+    foldr go Nothing fa
 
 
 {-| Create a new set consisting only of elements which satisfy a predicate.
